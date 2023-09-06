@@ -1,85 +1,39 @@
 
-import java.util.HashMap;
 import java.util.Map;
+
+import java.util.Scanner;
 public class Aplication {
 
-    private Map<DrinkMachine, Integer> drinksInventory = new HashMap<>();
-    private double totalCost = 0.0;
-
-    public Aplication() {
-        for (DrinkMachine drink : DrinkMachine.values()) {
-            drinksInventory.put(drink, 0);
-        }
-    }
-
-
-
-    public void makeDrink(DrinkMachine choice) {
-        switch (choice) {
-            case COFFEE:
-                makeCoffee();
-                break;
-            case TEA:
-                makeTea();
-                break;
-            case LEMONADE:
-                makeLemonade();
-                break;
-            case MOJITO:
-                makeMojito();
-                break;
-            case MINERAL_WATER:
-                makeMineralWater();
-                break;
-            case COCA_COLA:
-                makeCocaCola();
-                break;
-            default:
-                System.out.println("Напій не доступний.");
-        }
-    }
-
-    private void makeCoffee() {
-        drinksInventory.put(DrinkMachine.COFFEE, drinksInventory.get(DrinkMachine.COFFEE) + 1);
-        totalCost += Drinks.COFFEE_PRICE;
-    }
-
-    private void makeTea() {
-        drinksInventory.put(DrinkMachine.TEA, drinksInventory.get(DrinkMachine.TEA) + 1);
-        totalCost += Drinks.TEA_PRICE;
-    }
-
-    private void makeLemonade() {
-        drinksInventory.put(DrinkMachine.LEMONADE, drinksInventory.get(DrinkMachine.LEMONADE) + 1);
-        totalCost += Drinks.LEMONADE_PRICE;
-    }
-
-    private void makeMojito() {
-        drinksInventory.put(DrinkMachine.MOJITO, drinksInventory.get(DrinkMachine.MOJITO) + 1);
-        totalCost += Drinks.MOJITO_PRICE;
-    }
-
-    private void makeMineralWater() {
-        drinksInventory.put(DrinkMachine.MINERAL_WATER, drinksInventory.get(DrinkMachine.MINERAL_WATER) + 1);
-        totalCost += Drinks.MINERAL_WATER_PRICE;
-    }
-
-    private void makeCocaCola() {
-        drinksInventory.put(DrinkMachine.COCA_COLA, drinksInventory.get(DrinkMachine.COCA_COLA) + 1);
-        totalCost += Drinks.COCA_COLA_PRICE;
-    }
-
-    public double getTotalCost() {
-        return totalCost;
-    }
-
     public static void main(String[] args) {
-        Aplication drinksMachineApp = new Aplication();
-        drinksMachineApp.makeDrink(DrinkMachine.COFFEE);
-        drinksMachineApp.makeDrink(DrinkMachine.LEMONADE);
-        drinksMachineApp.makeDrink(DrinkMachine.MOJITO);
+        Scanner scanner = new Scanner(System.in);
+        DrinService drinksMachineApp = new DrinService();
 
-        System.out.println("Price: $" + drinksMachineApp.getTotalCost());
+        while (true) {
+            System.out.println("Drink Menu:");
+            drinksMachineApp.drinksMachineMenu();
+            System.out.print("Type 7 to complete the order: ");
+
+//            int choice = scanner.nextInt();
+            String choice = scanner.nextLine();
+
+            if (choice.equals("7")) {
+                break;
+            }
+
+            if (choice.matches("\\d") && Integer.parseInt(choice) >= 1 && Integer.parseInt(choice) <= 6) {
+                DrinkMachine selectedDrink = DrinkMachine.values()[Integer.parseInt(choice) - 1];
+                drinksMachineApp.makeDrink(selectedDrink);
+                System.out.println(selectedDrink + " added to the order.");
+            } else {
+                System.out.println("Invalid input.");
+            }
+        }
+
+        System.out.println("Your order:");
+        for (Map.Entry<DrinkMachine, Integer> entry : drinksMachineApp.getOrderedDrinks().entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue() + " units.");
+        }
+        System.out.println("Total cost: $" + drinksMachineApp.getTotalCost());
     }
 }
 
